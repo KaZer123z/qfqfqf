@@ -45,7 +45,6 @@ let uiLogo = {
 
 applyUIColors();
 
-// Ajouter ces styles dynamiques pour l'interface
 const dynamicCSS = `
     :root {
         --color-primary: ${uiColors.primary};
@@ -59,73 +58,25 @@ const dynamicCSS = `
         --color-highlight: ${uiColors.highlight};
         --color-success: ${uiColors.success};
         --animation-duration: ${uiAnimations.duration}ms;
+        
+        --hover-background: rgba(50, 50, 50, 0.8);
+        --hover-border: rgba(255, 255, 255, 0.3);
+        --hover-shadow: rgba(0, 0, 0, 0.5);
     }
     
-    /* Style pour les icônes d'image */
-    .nav-icon-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 4px;
+    .color-item:hover, .wheel-color:hover, .smoke-color:hover, .xenon-color:hover {
+        box-shadow: 0 0 8px var(--hover-shadow);
+        border-color: var(--hover-border);
     }
     
-    .nav-icon {
-        width: 24px;
-        height: 24px;
-        object-fit: contain;
-    }
-    
-    /* Appliquer les couleurs dynamiques aux éléments existants */
-    .custom .anul-btn {
-        background-color: var(--color-danger);
-    }
-    
-    .custom .anul-btn:hover {
-        background-color: var(--color-danger);
-        filter: brightness(1.2);
-    }
-    
-    .custom .valid-btn {
-        background-color: var(--color-primary);
-    }
-    
-    .custom .valid-btn:hover {
-        background-color: var(--color-primary);
-        filter: brightness(1.2);
-    }
-    
-    .custom .text-wrapper-17 {
-        color: var(--color-success);
-    }
-    
-    .custom .modif {
-        background: linear-gradient(.25turn, var(--color-background), var(--color-background-secondary));
-    }
-    
-    .custom .liste {
-        background: var(--color-background);
-    }
-    
-    /* Styles pour les transitions */
-    .custom .mod-item .selection .rond,
-    .custom .turbo-btn,
-    .custom .extra-toggle-btn,
-    .perf-btn, .int-btn, .ext-btn, .color-btn, .roues-btn, .extra-btn, .portes,
-    .xenon-color, .neon-color, .color-item, .wheel-color, .smoke-color,
-    .tint-option, .paint-type-item {
-        transition: all var(--animation-duration) ease !important;
-    }
-    
-    /* Style pour les états sélectionnés */
-    .active, .selected {
-        background-color: var(--color-highlight) !important;
-        border-color: var(--color-secondary) !important;
+    .color-tab:hover, .icon-btn:hover, .tint-option:hover, .paint-type-item:hover {
+        background-color: var(--hover-background);
     }
 `;
 
 $('head').append(`<style id="dynamic-ui-styles">${dynamicCSS}</style>`);
 
-// Fonction pour remplacer une icône FontAwesome par une image
+
 function replaceIconWithImage(selector, imageUrl) {
   const element = $(selector);
   const iconContainer = element.find('i');
@@ -2205,37 +2156,30 @@ function applyUIColors() {
     colorContainer.append(`
       <div class="top-icons-bar">
           <div class="icon-btn active" data-section="paint">
-              <i class="fas fa-palette"></i>
+              <i class="fas ${uiIcons.colorIcons.paint || 'fa-palette'}"></i>
               <span>Peinture</span>
           </div>
           <div class="icon-btn" data-section="headlights">
-              <i class="fas fa-lightbulb"></i>
+              <i class="fas ${uiIcons.colorIcons.headlights || 'fa-lightbulb'}"></i>
               <span>Phares</span>
           </div>
           <div class="icon-btn" data-section="neon">
-              <i class="fas fa-bolt"></i>
+              <i class="fas ${uiIcons.colorIcons.neon || 'fa-bolt'}"></i>
               <span>Néons</span>
           </div>
           <div class="icon-btn" data-section="windows">
-              <i class="fas fa-car-side"></i>
+              <i class="fas ${uiIcons.colorIcons.windows || 'fa-car-side'}"></i>
               <span>Vitres</span>
           </div>
+  
       </div>
-  `);
+    `);
 
     // Génération des différentes sections
-    colorContainer.append(
-      `<div id="paint-section" class="section-content"></div>`
-    );
-    colorContainer.append(
-      `<div id="headlights-section" class="section-content" style="display: none;"></div>`
-    );
-    colorContainer.append(
-      `<div id="neon-section" class="section-content" style="display: none;"></div>`
-    );
-    colorContainer.append(
-      `<div id="windows-section" class="section-content" style="display: none;"></div>`
-    );
+    colorContainer.append(`<div id="paint-section" class="section-content"></div>`);
+    colorContainer.append(`<div id="headlights-section" class="section-content" style="display: none;"></div>`);
+    colorContainer.append(`<div id="neon-section" class="section-content" style="display: none;"></div>`);
+    colorContainer.append(`<div id="windows-section" class="section-content" style="display: none;"></div>`);
 
     // Générer le contenu des sections
     generatePaintSection();
@@ -2243,20 +2187,19 @@ function applyUIColors() {
     // Si les autres fonctions existent, les appeler aussi
     if (typeof generateHeadlightsSection === "function")
       generateHeadlightsSection();
+    if (typeof generateHeadlightsSection === "function") generateHeadlightsSection();
     if (typeof generateNeonSection === "function") generateNeonSection();
     if (typeof generateWindowsSection === "function") generateWindowsSection();
 
     // Gestionnaire d'événements pour les onglets supérieurs
-    $(".icon-btn")
-      .off("click")
-      .on("click", function () {
-        $(".icon-btn").removeClass("active");
-        $(this).addClass("active");
+    $(".icon-btn").off("click").on("click", function() {
+      $(".icon-btn").removeClass("active");
+      $(this).addClass("active");
 
-        const section = $(this).data("section");
-        $(".section-content").hide();
-        $(`#${section}-section`).show();
-      });
+      const section = $(this).data("section");
+      $(".section-content").hide();
+      $(`#${section}-section`).show();
+  });
   }
 
   // Bouton pour ouvrir le menu des couleurs (suite)
@@ -2278,8 +2221,9 @@ function applyUIColors() {
       })
     );
   });
+  
 
-  // Fonction pour générer la section des phares
+  
 // Fonction pour générer la section des phares avec les vraies couleurs xenon de GTA
 function generateHeadlightsSection() {
   const headlightsSection = $("#headlights-section");
